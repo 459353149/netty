@@ -49,7 +49,7 @@ public class NIOService {
                 // 链接事件
                 if (selectionKey.isAcceptable()) {
                     System.out.println("注册事件");
-                    //如果是OP_ACCEPT 又新增的客户端俩捏
+                    // 如果是OP_ACCEPT 又新增的客户端俩捏
                     SocketChannel socketChannel = serverSocketChannel.accept();
                     // 设置为非阻塞
                     socketChannel.configureBlocking(false);
@@ -69,7 +69,7 @@ public class NIOService {
                     System.out.println("数据为：" + new String(attachment.array()));
 
                 }
-                //手动从集合中移除当前的key
+                // 手动从集合中移除当前的key
                 iterator.remove();
 
             }
