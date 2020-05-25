@@ -8,20 +8,20 @@ import java.util.Iterator;
 
 /**
  * @ProjectName netty
- * @ClassName GroupChatServier
+ * @ClassName GroupChatService
  * @Description TODO
  * @Author mi
  * @Date 2020/5/18 16:32
  * @Version 1.0
  **/
-public class GroupChatServier {
+public class GroupChatService {
     private Selector selector;
 
     private ServerSocketChannel serverSocketChannel;
 
     private static final int port = 6667;
 
-    public GroupChatServier() {
+    public GroupChatService() {
 
 
         // 得到选择器
@@ -38,44 +38,35 @@ public class GroupChatServier {
 
     }
 
-    public static void main(String[] args) {
-        GroupChatServier groupChatServier = new GroupChatServier();
+    public static void main(String[] args) throws Exception {
+        GroupChatService groupChatServier = new GroupChatService();
         groupChatServier.listen();
     }
 
 
-    public void listen() {
+    public void listen() throws IOException {
         // 循环监听
         while (true) {
-            try {
-                int count = selector.select(2000);
-                // 有事件处理
-                if (count > 0) {
-                    // 遍历得到的selectorkey
-                    Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
-                    while (iterator.hasNext()) {
-                        SelectionKey selectionKey = iterator.next();
-                        if (selectionKey.isAcceptable()) {
-                            SocketChannel accept = serverSocketChannel.accept();
-                            accept.configureBlocking(false);
-                            accept.register(selector, SelectionKey.OP_READ);
+            int count = selector.select(2000);
+            // 有事件处理
+            if (count > 0) {
+                // 遍历得到的selectorkey
+                Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+                while (iterator.hasNext()) {
+                    SelectionKey selectionKey = iterator.next();
+                    if (selectionKey.isAcceptable()) {
+                        SocketChannel accept = serverSocketChannel.accept();
+                        accept.configureBlocking(false);
+                        accept.register(selector, SelectionKey.OP_READ);
 
-                            System.out.println(accept.getRemoteAddress() + "上线");
-                        }
-                        if (selectionKey.isReadable()) {
-                            readDate(selectionKey);
-                        }
-                        iterator.remove();
+                        System.out.println(accept.getRemoteAddress() + "上线");
                     }
-                } else {
-                    // 等待
+                    if (selectionKey.isReadable()) {
+                        readDate(selectionKey);
+                    }
+                    iterator.remove();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-
             }
-
         }
     }
 
